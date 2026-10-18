@@ -7,8 +7,8 @@ import qs.Commons
 
 // Mac-style ⌘Tab strip. Hyprland owns the keys (hold ⌘, tap Tab, let go) and
 // drives this over IPC, so the surface never takes keyboard focus:
-//   omarchy-shell macSwitcher show "0xaaab…,0xaaac…" 1
-//   omarchy-shell macSwitcher hide
+//   omarchy-shell omacmdSwitcher show "0xaaab…,0xaaac…" 1
+//   omarchy-shell omacmdSwitcher hide
 Item {
   id: root
 
@@ -80,7 +80,7 @@ Item {
   }
 
   IpcHandler {
-    target: "macSwitcher"
+    target: "omacmdSwitcher"
     function show(addresses: string, index: int): void { root.show(addresses, index) }
     function hide(): void { root.hide() }
     // Read-only snapshot for scripts and tests.
@@ -97,7 +97,7 @@ Item {
     visible: root.opened
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.namespace: "mackeys-switcher"
+    WlrLayershell.namespace: "omacmd-switcher"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
     implicitWidth: panel.width

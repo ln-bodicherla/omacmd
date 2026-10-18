@@ -1,6 +1,6 @@
 # Manual test checklist
 
-Run `lua tests/run.lua` and `mac-keys doctor` first. Then, on a real machine,
+Run `lua tests/run.lua` and `omacmd doctor` first. Then, on a real machine,
 tick each line. Note the app and what happened for anything that fails.
 
 ## Chromium (and Firefox if installed)
@@ -59,5 +59,5 @@ tick each line. Note the app and what happened for anything that fails.
 
 ## Toggle
 
-- [ ] `mac-keys off` restores stock Omarchy keys; `mac-keys on` brings them back
-- [ ] `mac-keys uninstall` then `mac-keys install` leaves no errors
+- [ ] `omacmd off` restores stock Omarchy keys; `omacmd on` brings them back
+- [ ] `omacmd uninstall` then `omacmd install` leaves no errors

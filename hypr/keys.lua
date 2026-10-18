@@ -9,7 +9,7 @@
 -- context falls back to "default".
 --
 -- Called by translate.lua as keys(config, dir); config is the table from
--- ~/.config/hypr/mac-keys.lua (see config.example.lua for every option).
+-- ~/.config/hypr/omacmd.lua (see config.example.lua for every option).
 
 return function(cfg, dir)
   cfg = cfg or {}
@@ -237,10 +237,10 @@ return function(cfg, dir)
   -- ⌘Tab: most-recently-used window switcher (hold ⌘, tap Tab, let go)
   -------------------------------------------------------------------------
 
-  _G.__mac_keys_mru = _G.__mac_keys_mru or {}
-  local mru = _G.__mac_keys_mru
+  _G.__omacmd_mru = _G.__omacmd_mru or {}
+  local mru = _G.__omacmd_mru
   -- Shared across reloads so a reload mid-cycle can't strand the switcher.
-  _G.__mac_keys_cycle = nil
+  _G.__omacmd_cycle = nil
 
   local function touch(address)
     for i = #mru, 1, -1 do
@@ -250,11 +250,11 @@ return function(cfg, dir)
     while #mru > 64 do table.remove(mru) end
   end
 
-  if _G.__mac_keys_active_sub then
-    pcall(function() _G.__mac_keys_active_sub:remove() end)
+  if _G.__omacmd_active_sub then
+    pcall(function() _G.__omacmd_active_sub:remove() end)
   end
-  _G.__mac_keys_active_sub = hl.on("window.active", function(w)
-    if _G.__mac_keys_cycle then return end
+  _G.__omacmd_active_sub = hl.on("window.active", function(w)
+    if _G.__omacmd_cycle then return end
     if type(w) ~= "table" or not w.address then w = hl.get_active_window() end
     if w and w.address then touch(w.address) end
   end)
@@ -270,16 +270,16 @@ return function(cfg, dir)
   local function switcher_ui(cycle)
     if not SWITCHER_UI then return end
     if cycle then
-      hl.exec_cmd("omarchy-shell macSwitcher show '" .. table.concat(cycle.list, ",") .. "' " .. (cycle.idx - 1))
+      hl.exec_cmd("omarchy-shell omacmdSwitcher show '" .. table.concat(cycle.list, ",") .. "' " .. (cycle.idx - 1))
     else
-      hl.exec_cmd("omarchy-shell macSwitcher hide")
+      hl.exec_cmd("omarchy-shell omacmdSwitcher hide")
     end
   end
 
   local function commit_cycle()
-    local cycle = _G.__mac_keys_cycle
+    local cycle = _G.__omacmd_cycle
     if not cycle then return end
-    _G.__mac_keys_cycle = nil
+    _G.__omacmd_cycle = nil
     switcher_ui(nil)
     local address = cycle.list[cycle.idx]
     touch(address)
@@ -297,7 +297,7 @@ return function(cfg, dir)
   -- Fallback for a missed ⌘ release: poll the key until it is up.
   local function watch_release(gen)
     hl.timer(function()
-      local cycle = _G.__mac_keys_cycle
+      local cycle = _G.__omacmd_cycle
       if not cycle or cycle.gen ~= gen then return end
       if super_down() then
         watch_release(gen)
@@ -309,7 +309,7 @@ return function(cfg, dir)
 
   local function app_switch(step)
     return function()
-      local cycle = _G.__mac_keys_cycle
+      local cycle = _G.__omacmd_cycle
       if not cycle then
         local exists = {}
         for _, x in ipairs(hl.get_windows() or {}) do
@@ -328,9 +328,9 @@ return function(cfg, dir)
           if not seen[a] then list[#list + 1] = a end
         end
         if #list < 2 then return end
-        _G.__mac_keys_gen = (_G.__mac_keys_gen or 0) + 1
-        cycle = { list = list, idx = 1, gen = _G.__mac_keys_gen }
-        _G.__mac_keys_cycle = cycle
+        _G.__omacmd_gen = (_G.__omacmd_gen or 0) + 1
+        cycle = { list = list, idx = 1, gen = _G.__omacmd_gen }
+        _G.__omacmd_cycle = cycle
         watch_release(cycle.gen)
       end
       cycle.idx = ((cycle.idx - 1 + step) % #cycle.list) + 1
@@ -495,8 +495,8 @@ return function(cfg, dir)
   bind("CTRL + ALT + M", "⌃⌥M show minimized windows", hl.dsp.workspace.toggle_special("minimized"))
 
   -- Mission Control: ⌃↑ and the F3 key open the workspace overview.
-  bind("CTRL + UP", "⌃↑ workspace overview", "omarchy-shell macOverview toggle")
-  bind("XF86LaunchA", "Mission Control key: workspace overview", "omarchy-shell macOverview toggle")
+  bind("CTRL + UP", "⌃↑ workspace overview", "omarchy-shell omacmdOverview toggle")
+  bind("XF86LaunchA", "Mission Control key: workspace overview", "omarchy-shell omacmdOverview toggle")
 
   -- Workspaces like Spaces: ⌃←/→ switch, ⌃⇧←/→ carry the window along.
   bind("CTRL + LEFT", "⌃← previous workspace", hl.dsp.focus({ workspace = "e-1" }))
@@ -523,8 +523,8 @@ return function(cfg, dir)
   -- Trackpad: three fingers switch workspaces, four fingers up/down open/close the overview.
   if GESTURES then
     hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
-    hl.gesture({ fingers = 4, direction = "up", action = function() hl.exec_cmd("omarchy-shell macOverview open") end })
-    hl.gesture({ fingers = 4, direction = "down", action = function() hl.exec_cmd("omarchy-shell macOverview close") end })
+    hl.gesture({ fingers = 4, direction = "up", action = function() hl.exec_cmd("omarchy-shell omacmdOverview open") end })
+    hl.gesture({ fingers = 4, direction = "down", action = function() hl.exec_cmd("omarchy-shell omacmdOverview close") end })
     hl.config({
       gestures = {
         workspace_swipe_distance = option("swipe_distance", 1000), -- finger travel per workspace
@@ -536,7 +536,7 @@ return function(cfg, dir)
   end
 
   -------------------------------------------------------------------------
-  -- Personal additions from ~/.config/hypr/mac-keys.lua
+  -- Personal additions from ~/.config/hypr/omacmd.lua
   -------------------------------------------------------------------------
 
   if type(cfg.after) == "function" then

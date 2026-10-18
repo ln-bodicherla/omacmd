@@ -1,11 +1,18 @@
-# omarchy-mac-keys
+# omacmd
 
-macOS keyboard shortcuts for [Omarchy](https://omarchy.org): ⌘, ⌥ and ⌃ do what
+> ⌘ on [Omarchy](https://omarchy.org) works like ⌘ on a Mac.
+
+macOS keyboard shortcuts for Omarchy: ⌘, ⌥ and ⌃ do what
 they do on a Mac, inside each app, not just in the window manager. Also a
 ⌘Tab switcher, a Mission Control-style overview and Mac trackpad gestures.
 
 On a Mac keyboard (or Asahi Linux on a MacBook) the ⌘ key is SUPER, so the keys
 are already in the right place. On a PC keyboard, see [PC keyboards](#pc-keyboards).
+
+**Status: early (0.1.0).** Developed on one machine (Asahi Linux on a MacBook
+Pro, Omarchy 4.0, Hyprland 0.56). The automated tests pass, but the manual
+checklist in [TESTING.md](TESTING.md) has not been run end to end yet. Expect
+rough edges, and please open an issue with your app and what happened.
 
 ## How it works
 
@@ -17,7 +24,7 @@ are already in the right place. On a PC keyboard, see [PC keyboards](#pc-keyboar
   else), then sends it with Hyprland's `send_key_state`, the same mechanism as
   Omarchy's universal ⌘C/⌘V. Games, VMs and remote desktops get keys untouched.
 - **`shell/`** holds two Omarchy shell plugins: the ⌘Tab switcher
-  (`mackeys.switcher`) and the overview (`mackeys.overview`).
+  (`omacmd.switcher`) and the overview (`omacmd.overview`).
 
 ## Requirements
 
@@ -30,25 +37,25 @@ are already in the right place. On a PC keyboard, see [PC keyboards](#pc-keyboar
 From the AUR (once published) or a checkout:
 
 ```bash
-git clone <repo-url> ~/Projects/omarchy-mac-keys
-~/Projects/omarchy-mac-keys/bin/mac-keys install
+git clone https://github.com/ln-bodicherla/omacmd ~/Projects/omacmd
+~/Projects/omacmd/bin/omacmd install
 ```
 
-`mac-keys install` backs up and hooks `~/.config/hypr/hyprland.lua` (rolling back
+`omacmd install` backs up and hooks `~/.config/hypr/hyprland.lua` (rolling back
 if Hyprland reports errors), adds a Ghostty `config-file` include, links the shell
-plugins and creates `~/.config/hypr/mac-keys.lua` for your settings. It is safe to
+plugins and creates `~/.config/hypr/omacmd.lua` for your settings. It is safe to
 re-run.
 
 ```
-mac-keys on | off     enable / disable without uninstalling
-mac-keys status       on/off and Hyprland config errors
-mac-keys doctor       check the installation
-mac-keys list         list the shortcuts it binds
-mac-keys uninstall    remove every hook (keeps your settings file)
+omacmd on | off     enable / disable without uninstalling
+omacmd status       on/off and Hyprland config errors
+omacmd doctor       check the installation
+omacmd list         list the shortcuts it binds
+omacmd uninstall    remove every hook (keeps your settings file)
 ```
 
 `omarchy refresh hyprland` replaces `hyprland.lua` and drops the hook; run
-`mac-keys install` again afterwards (`mac-keys doctor` will tell you).
+`omacmd install` again afterwards (`omacmd doctor` will tell you).
 
 ## Shortcuts
 
@@ -117,11 +124,11 @@ your shell expects.
 | ⌘⌃⌥ info keys (battery, time, …) | ⌃⌥⇧ + same key |
 | ⌘W / ⌘Q close window | Mac ⌘W / ⌘Q |
 
-`mac-keys list` and Omarchy's keybindings menu (⌃⌥K) show the live set.
+`omacmd list` and Omarchy's keybindings menu (⌃⌥K) show the live set.
 
 ## Settings
 
-`~/.config/hypr/mac-keys.lua` (template: [`hypr/config.example.lua`](hypr/config.example.lua)):
+`~/.config/hypr/omacmd.lua` (template: [`hypr/config.example.lua`](hypr/config.example.lua)):
 turn off the ⌃ text keys, the switcher overlay, gestures or ⌘-click; tune swipe
 sensitivity; add apps that need raw keys or where ⌘W closes the window; and add
 your own bindings in `after`.

@@ -8,7 +8,7 @@ import qs.Commons
 // Mission Control-like overview of the focused monitor's workspaces.
 // Click a window to focus it, a card to switch to that workspace, empty space
 // or Esc to close. Driven from Hyprland (four-finger swipe up) over IPC:
-//   omarchy-shell macOverview toggle | open | close
+//   omarchy-shell omacmdOverview toggle | open | close
 Item {
   id: root
 
@@ -150,7 +150,7 @@ Item {
   }
 
   IpcHandler {
-    target: "macOverview"
+    target: "omacmdOverview"
     function toggle(): void { root.toggle() }
     function open(): void { root.open() }
     function close(): void { root.close() }
@@ -172,7 +172,7 @@ Item {
     anchors { top: true; bottom: true; left: true; right: true }
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.namespace: "mackeys-overview"
+    WlrLayershell.namespace: "omacmd-overview"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: root.opened ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 

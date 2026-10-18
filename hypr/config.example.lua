@@ -1,11 +1,11 @@
--- Personal settings for omarchy-mac-keys. Copy to ~/.config/hypr/mac-keys.lua
--- (`mac-keys install` does this for you). Every setting is optional.
+-- Personal settings for omacmd. Copy to ~/.config/hypr/omacmd.lua
+-- (`omacmd install` does this for you). Every setting is optional.
 return {
   -- Physical ⌃A/⌃E/⌃K/⌃F/⌃B/⌃N/⌃P/⌃D/⌃H edit text like on a Mac in GUI apps.
   -- false keeps Linux behaviour for ⌃ (terminals are never affected).
   emacs_ctrl_keys = true,
 
-  -- Show the ⌘Tab switcher overlay (mackeys.switcher shell plugin).
+  -- Show the ⌘Tab switcher overlay (omacmd.switcher shell plugin).
   -- false switches focus directly on each Tab press instead.
   switcher_ui = true,
 
@@ -28,7 +28,7 @@ return {
     -- "org.example.App",
   },
 
-  -- Your own bindings, applied after mac-keys. `mk` has helpers:
+  -- Your own bindings, applied after omacmd. `mk` has helpers:
   --   mk.bind(keys, description, dispatcher_or_command)
   --   mk.map(keys, description, { default = mk.C("K"), terminal = mk.CS("K"), browser = ... })
   --   mk.C / mk.CS / mk.A / mk.S / mk.K / mk.CA build key chords, mk.seq(...) chains them.

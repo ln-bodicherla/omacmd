@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "mackeys.overview",
+  "id": "omacmd.overview",
   "name": "Mac-style workspace overview",
   "version": "0.1.0",
-  "author": "omarchy-mac-keys",
+  "author": "omacmd",
   "description": "Mission Control-like overview of workspaces and their windows",
   "kinds": ["service"],
   "keepLoaded": true,

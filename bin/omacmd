@@ -1,11 +1,11 @@
 #!/bin/bash
-# mac-keys: macOS-style shortcuts for Omarchy.
-#   mac-keys install     hook into Hyprland, Ghostty and the Omarchy shell (safe to re-run)
-#   mac-keys uninstall   remove every hook; your ~/.config/hypr/mac-keys.lua is kept
-#   mac-keys on | off    enable / disable without uninstalling
-#   mac-keys status      on/off and Hyprland config errors
-#   mac-keys doctor      check the installation and repair hints
-#   mac-keys list        list the shortcuts it binds
+# omacmd: macOS-style shortcuts for Omarchy.
+#   omacmd install     hook into Hyprland, Ghostty and the Omarchy shell (safe to re-run)
+#   omacmd uninstall   remove every hook; your ~/.config/hypr/omacmd.lua is kept
+#   omacmd on | off    enable / disable without uninstalling
+#   omacmd status      on/off and Hyprland config errors
+#   omacmd doctor      check the installation and repair hints
+#   omacmd list        list the shortcuts it binds
 
 set -euo pipefail
 
@@ -15,19 +15,19 @@ if [[ -n "${MAC_KEYS_ROOT:-}" ]]; then
 elif [[ -f "$(dirname "$self")/../hypr/translate.lua" ]]; then
   root=$(cd "$(dirname "$self")/.." && pwd) # running from a checkout
 else
-  root=/usr/share/omarchy-mac-keys
+  root=/usr/share/omacmd
 fi
 
 hypr_config="$HOME/.config/hypr/hyprland.lua"
-user_config="$HOME/.config/hypr/mac-keys.lua"
+user_config="$HOME/.config/hypr/omacmd.lua"
 ghostty_config="$HOME/.config/ghostty/config"
 plugin_dir="$HOME/.config/omarchy/plugins"
 shell_config="$HOME/.config/omarchy/shell.json"
-flag="$HOME/.local/state/mac-keys/disabled"
-begin_mark="-- >>> omarchy-mac-keys"
-end_mark="-- <<< omarchy-mac-keys"
+flag="$HOME/.local/state/omacmd/disabled"
+begin_mark="-- >>> omacmd"
+end_mark="-- <<< omacmd"
 
-die() { echo "mac-keys: $*" >&2; exit 1; }
+die() { echo "omacmd: $*" >&2; exit 1; }
 
 reload() {
   hyprctl reload >/dev/null
@@ -41,7 +41,7 @@ reload() {
   fi
 }
 
-strip_hooks() { # file -> stdout without mac-keys blocks
+strip_hooks() { # file -> stdout without omacmd blocks
   awk -v b="$begin_mark" -v e="$end_mark" '
     index($0, b) == 1 { skip = 1; next }
     index($0, e) == 1 { skip = 0; next }
@@ -62,9 +62,9 @@ user = 'require("hypr.bindings")'
 if load not in src or user not in src:
     sys.exit("hyprland.lua has no %s / %s line; add the hook by hand (see README)" % (load, user))
 src = src.replace(load,
-    "%s (managed by mac-keys install)\nlocal mac_ok, mac_keys = pcall(dofile, %s)\nif mac_ok then mac_keys.begin() end\n%s\n%s\n%s\nif mac_ok then mac_keys.finish() end\n%s"
+    "%s (managed by omacmd install)\nlocal omacmd_ok, omacmd = pcall(dofile, %s)\nif omacmd_ok then omacmd.begin() end\n%s\n%s\n%s\nif omacmd_ok then omacmd.finish() end\n%s"
     % (b, '"' + root + '/hypr/translate.lua"', e, load, b, e), 1)
-src = src.replace(user, "%s\n%s\nif mac_ok then mac_keys.apply() end\n%s" % (user, b, e), 1)
+src = src.replace(user, "%s\n%s\nif omacmd_ok then omacmd.apply() end\n%s" % (user, b, e), 1)
 sys.stdout.write(src)
 PY
 )
@@ -77,13 +77,13 @@ hook_ghostty() {
   [[ -f "$ghostty_config" ]] || return 0
   local tmp
   tmp=$(mktemp)
-  strip_hooks "$ghostty_config" | sed "s|^$begin_mark|# >>> omarchy-mac-keys|" >"$tmp"
-  grep -v '^# >>> omarchy-mac-keys\|^# <<< omarchy-mac-keys\|mac-keys.conf' "$tmp" >"$tmp.2" || true
+  strip_hooks "$ghostty_config" | sed "s|^$begin_mark|# >>> omacmd|" >"$tmp"
+  grep -v '^# >>> omacmd\|^# <<< omacmd\|omacmd.conf' "$tmp" >"$tmp.2" || true
   {
     cat "$tmp.2"
-    echo "# >>> omarchy-mac-keys"
-    echo "config-file = ?$root/ghostty/mac-keys.conf"
-    echo "# <<< omarchy-mac-keys"
+    echo "# >>> omacmd"
+    echo "config-file = ?$root/ghostty/omacmd.conf"
+    echo "# <<< omacmd"
   } >"$ghostty_config"
   rm -f "$tmp" "$tmp.2"
 }
@@ -92,7 +92,7 @@ unhook_ghostty() {
   [[ -f "$ghostty_config" ]] || return 0
   local tmp
   tmp=$(mktemp)
-  awk '/^# >>> omarchy-mac-keys/{s=1;next} /^# <<< omarchy-mac-keys/{s=0;next} !s' "$ghostty_config" >"$tmp"
+  awk '/^# >>> omacmd/{s=1;next} /^# <<< omacmd/{s=0;next} !s' "$ghostty_config" >"$tmp"
   cat "$tmp" >"$ghostty_config"
   rm -f "$tmp"
 }
@@ -149,7 +149,7 @@ case "${1:-status}" in
     fi
     hook_ghostty
     link_plugins
-    echo "mac-keys installed from $root (backup: $backup)"
+    echo "omacmd installed from $root (backup: $backup)"
     echo "Settings: $user_config — open a new Ghostty window for ⌘K."
     ;;
   uninstall)
@@ -160,40 +160,40 @@ case "${1:-status}" in
     unhook_ghostty
     unlink_plugins
     reload || true
-    echo "mac-keys removed (kept $user_config)."
+    echo "omacmd removed (kept $user_config)."
     ;;
   on)
     rm -f "$flag"
     reload
-    echo "mac-keys: on"
+    echo "omacmd: on"
     ;;
   off)
     mkdir -p "$(dirname "$flag")"
     touch "$flag"
     reload
-    echo "mac-keys: off (stock Omarchy keys)"
+    echo "omacmd: off (stock Omarchy keys)"
     ;;
   status)
-    if [[ -e "$flag" ]]; then echo "mac-keys: off"; else echo "mac-keys: on"; fi
+    if [[ -e "$flag" ]]; then echo "omacmd: off"; else echo "omacmd: on"; fi
     hyprctl configerrors
     ;;
   doctor)
     ok=1
     check() { if eval "$2"; then echo "  ok    $1"; else echo "  FAIL  $1${3:+ — $3}"; ok=0; fi; }
-    echo "mac-keys doctor (files: $root)"
+    echo "omacmd doctor (files: $root)"
     check "files present" "[[ -f '$root/hypr/translate.lua' && -f '$root/hypr/keys.lua' ]]"
-    check "Hyprland hook" "grep -qF -- '$begin_mark' '$hypr_config'" "run: mac-keys install (omarchy refresh hyprland removes it)"
-    check "hook points at these files" "grep -qF -- '$root/hypr/translate.lua' '$hypr_config'" "run: mac-keys install"
-    check "enabled" "[[ ! -e '$flag' ]]" "run: mac-keys on"
+    check "Hyprland hook" "grep -qF -- '$begin_mark' '$hypr_config'" "run: omacmd install (omarchy refresh hyprland removes it)"
+    check "hook points at these files" "grep -qF -- '$root/hypr/translate.lua' '$hypr_config'" "run: omacmd install"
+    check "enabled" "[[ ! -e '$flag' ]]" "run: omacmd on"
     check "no Hyprland config errors" "[[ -z \"\$(hyprctl configerrors | tr -d '[:space:]')\" ]]" "see: hyprctl configerrors"
     check "shortcuts loaded" "hyprctl binds -j | grep -q '\"⌘T\"'" "check notifications for a load error"
     check "Hyprland Lua API (0.56+)" "[[ \$(hyprctl repl 'return tostring(hl.dsp.send_key_state ~= nil)' 2>/dev/null) == true ]]" "needs Hyprland 0.56+ with Lua config"
     for p in "$root"/shell/*/; do
       [[ -f "$p/manifest.json" ]] || continue
       n=$(basename "$p")
-      check "shell plugin $n" "[[ -e '$plugin_dir/$n' ]] && jq -e --arg id '$n' 'any(.plugins[]?; .id == \$id)' '$shell_config' >/dev/null" "run: mac-keys install"
+      check "shell plugin $n" "[[ -e '$plugin_dir/$n' ]] && jq -e --arg id '$n' 'any(.plugins[]?; .id == \$id)' '$shell_config' >/dev/null" "run: omacmd install"
     done
-    [[ -f "$ghostty_config" ]] && check "Ghostty include" "grep -q 'mac-keys.conf' '$ghostty_config'" "run: mac-keys install"
+    [[ -f "$ghostty_config" ]] && check "Ghostty include" "grep -q 'omacmd.conf' '$ghostty_config'" "run: omacmd install"
     [[ $ok == 1 ]]
     ;;
   list)

@@ -9,4 +9,4 @@ First version. Tested against Omarchy 4.0.3rc4 / Hyprland 0.56.2 on Asahi (MacBo
 - ⌘Tab switcher overlay, Mission Control-style overview, Mac trackpad gestures
 - ⌘-click opens links in a new tab
 - Raw-input passthrough for games, VMs and remote desktops
-- `mac-keys` install / uninstall / on / off / doctor / list
+- `omacmd` install / uninstall / on / off / doctor / list

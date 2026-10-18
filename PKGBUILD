@@ -1,15 +1,15 @@
-# Maintainer: lnbodicherla <ln.bodicherla@pm.me>
-pkgname=omarchy-mac-keys
+# Maintainer: ln-bodicherla <https://github.com/ln-bodicherla>
+pkgname=omacmd
 pkgver=0.1.0
 pkgrel=1
 pkgdesc="macOS keyboard shortcuts, per app, for Omarchy (Hyprland)"
 arch=('any')
-url="https://github.com/CHANGE-ME/omarchy-mac-keys"
+url="https://github.com/ln-bodicherla/omacmd"
 license=('MIT')
 depends=('hyprland>=0.56' 'jq' 'python')
 optdepends=('ghostty: terminal shortcuts like ⌘K')
 checkdepends=('lua')
-install=omarchy-mac-keys.install
+install=omacmd.install
 source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
 sha256sums=('SKIP')
 

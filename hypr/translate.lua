@@ -10,17 +10,17 @@
 --   ⌘⌥⇧ + letter (launcher variants)                    ->  ⌃⌥⌘⇧ + same key
 --   ⌘ + F fullscreen                                     ->  ⌃⌘F  (Mac)
 --   ⌘ + ⏎ terminal                                       ->  ⌃⌥⌘T
--- Toggle the whole thing with: mac-keys on|off
+-- Toggle the whole thing with: omacmd on|off
 --
--- Loaded from ~/.config/hypr/hyprland.lua by the hook `mac-keys install` adds.
--- Personal settings live in ~/.config/hypr/mac-keys.lua (see config.example.lua).
+-- Loaded from ~/.config/hypr/hyprland.lua by the hook `omacmd install` adds.
+-- Personal settings live in ~/.config/hypr/omacmd.lua (see config.example.lua).
 
 local M = {}
 
 local home = os.getenv("HOME") or ""
 local here = (debug.getinfo(1, "S").source:match("^@(.*/)") or "./")
 
-local disabled_flag = home .. "/.local/state/mac-keys/disabled"
+local disabled_flag = home .. "/.local/state/omacmd/disabled"
 
 function M.enabled()
   local f = io.open(disabled_flag, "r")
@@ -130,14 +130,14 @@ end
 -- Survive config reloads: the Lua state persists, so keep the real functions once.
 -- (`hl` is absent when the translator is loaded by the unit tests.)
 if hl then
-  _G.__mac_keys_orig = _G.__mac_keys_orig or { bind = hl.bind, unbind = hl.unbind }
+  _G.__omacmd_orig = _G.__omacmd_orig or { bind = hl.bind, unbind = hl.unbind }
 end
 
 function M.begin()
   if not M.enabled() then
     return
   end
-  local orig = _G.__mac_keys_orig
+  local orig = _G.__omacmd_orig
   hl.bind = function(keys, ...)
     local k = M.translate(keys)
     if k == false then
@@ -155,18 +155,18 @@ function M.begin()
 end
 
 function M.finish()
-  hl.bind = _G.__mac_keys_orig.bind
-  hl.unbind = _G.__mac_keys_orig.unbind
+  hl.bind = _G.__omacmd_orig.bind
+  hl.unbind = _G.__omacmd_orig.unbind
 end
 
 local function notify_error(what, err)
-  hl.exec_cmd("omarchy-notification-send -u critical " .. string.format("%q", "mac-keys: " .. what) .. " "
+  hl.exec_cmd("omarchy-notification-send -u critical " .. string.format("%q", "omacmd: " .. what) .. " "
     .. string.format("%q", tostring(err)))
 end
 
--- Personal settings: ~/.config/hypr/mac-keys.lua returning a table.
+-- Personal settings: ~/.config/hypr/omacmd.lua returning a table.
 function M.user_config()
-  local path = home .. "/.config/hypr/mac-keys.lua"
+  local path = home .. "/.config/hypr/omacmd.lua"
   local f = io.open(path, "r")
   if not f then
     return {}
@@ -174,7 +174,7 @@ function M.user_config()
   f:close()
   local ok, cfg = pcall(dofile, path)
   if not ok or type(cfg) ~= "table" then
-    notify_error("ignoring ~/.config/hypr/mac-keys.lua", ok and "it must return a table" or cfg)
+    notify_error("ignoring ~/.config/hypr/omacmd.lua", ok and "it must return a table" or cfg)
     return {}
   end
   return cfg
