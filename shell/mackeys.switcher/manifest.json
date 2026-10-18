@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "mackeys.switcher",
+  "name": "Mac-style window switcher",
+  "version": "0.1.0",
+  "author": "omarchy-mac-keys",
+  "description": "Cmd+Tab app icon strip driven by Hyprland over IPC",
+  "kinds": ["service"],
+  "keepLoaded": true,
+  "entryPoints": { "service": "Service.qml" }
+}

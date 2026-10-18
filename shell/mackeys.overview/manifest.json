@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "mackeys.overview",
+  "name": "Mac-style workspace overview",
+  "version": "0.1.0",
+  "author": "omarchy-mac-keys",
+  "description": "Mission Control-like overview of workspaces and their windows",
+  "kinds": ["service"],
+  "keepLoaded": true,
+  "entryPoints": { "service": "Service.qml" }
+}
